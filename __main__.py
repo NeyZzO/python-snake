@@ -3,6 +3,8 @@ import pygame, pygame.event
 from pygame.locals import * # type: ignore
 from snake import Snake
 from fruit import Apple
+from button import Button
+from screens import MainScreen
 
 WINDOW_WIDTH = 400
 WINDOW_HEIGHT = 400
@@ -19,44 +21,65 @@ class App:
         self.clock: "pygame.time.Clock" = pygame.time.Clock()
         self.__screen: "pygame.surface.Surface" = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption("Pygame snake game")
+        self.started = False
+
+        
+        self.mainScreen = MainScreen(self)
 
         # Entités
-        self.apple = Apple(self.__screen)
-        self.snake = Snake(self)
+        self.apple: "Apple" | None = None #Apple(self.__screen)
+        self.snake: "Snake" | None = None #Snake(self)
 
         self.execute(fps)
 
     def onEvent(self, event: "pygame.event.Event") -> None:
         if event.type == pygame.QUIT:
             self.__running = False
+        
 
-    def getScreen(self):
+    def getScreen(self) -> 'pygame.surface.Surface':
         return self.__screen
 
     def onLoop(self):
-        self.snake.update(self.__screen)
+        if self.snake and self.snake.alive:
+            self.snake.update(self.__screen)
 
     def onRender(self):
         self.__screen.fill("purple")
-        self.snake.draw(self.__screen)
-
-        self.apple.draw()
-        self.snake.drawScore(pygame.color.Color(255, 255, 255), "Arial", 15, self.__screen)
+        if (self.apple and self.snake) and self.snake.alive:
+            self.snake.draw(self.__screen)
+            self.apple.draw()
+            self.snake.drawScore(pygame.color.Color(255, 255, 255), "Arial", 15, self.__screen)
+        elif self.started == False and not self.snake:
+            self.mainScreen.draw()
+        elif self.started and self.snake.alive:
+            pass
+            
         pygame.display.update()
 
     def onCleanup(self):
         pygame.quit()
-
+        
+    def startGame(self):
+        self.snake = Snake(self)
+        self.apple = Apple(self.__screen)
+        self.started = True        
+    
     def execute(self, fps: int):
         while self.__running:
             for event in pygame.event.get():
                 self.onEvent(event)
-                self.snake.onEvent(event)
-
+                if self.snake:
+                    self.snake.onEvent(event)
+                if not self.started and not self.snake:
+                    self.mainScreen.onEvent(event)
+                                    
             self.onLoop()
             self.onRender()
+            
 
             self.clock.tick(fps)
+            
         self.onCleanup()
 
 if __name__ == "__main__":
