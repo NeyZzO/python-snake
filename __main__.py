@@ -19,7 +19,7 @@ class App:
         self.clock: "pygame.time.Clock" = pygame.time.Clock()
         self.__screen: "pygame.surface.Surface" = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption("Pygame snake game")
-        
+
         # Entités
         self.apple = Apple(self.__screen)
         self.snake = Snake(self)
@@ -52,14 +52,12 @@ class App:
             for event in pygame.event.get():
                 self.onEvent(event)
                 self.snake.onEvent(event)
-        
+
             self.onLoop()
             self.onRender()
 
             self.clock.tick(fps)
         self.onCleanup()
-
-    
 
 if __name__ == "__main__":
     app = App(FPS)
