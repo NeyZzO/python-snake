@@ -2,7 +2,7 @@ import pygame
 # from main import App
 
 class Snake:
-    def __init__(self, game ):
+    def __init__(self, game):
         self.direction: str = "RIGHT"
         self.__change_to: str | None = None
         self.pos = [100, 64]
@@ -27,6 +27,11 @@ class Snake:
         self.score = 0
         self.game = game
 
+
+    def gameOver(self):
+        self.alive = False
+        self.game.gameOver()
+
     def drawScore(self, color: "pygame.Color", font: str, size: int, window: "pygame.surface.Surface"):
         """Draws the score on each frame of the game
 
@@ -37,7 +42,7 @@ class Snake:
             window (pygame.surface.Surface): The game window
         """
         score_font: "pygame.font.Font" = pygame.font.SysFont(font, size)
-        score_surface = score_font.render(f"Score: {self.score} | X: {self.pos[0]} Y: {self.pos[1]}", True, color)
+        score_surface = score_font.render(f"Score: {self.score} | Best: {"UNKNOWN"}", True, color)
         score_rect = score_surface.get_rect()
 
         window.blit(score_surface, score_rect)
@@ -174,6 +179,16 @@ class Snake:
             self.score += 1
         else:
             self.body.pop()
+
+        if self.pos[0] < 0 or self.pos[0] > window.get_width() - 16:
+            self.gameOver()
+        if self.pos[1] < 0 or self.pos[1] > window.get_height() - 16:
+            self.gameOver()
+    
+        # Touching the snake body
+        for block in self.body[1:]:
+            if self.pos[0] == block[0] and self.pos[1] == block[1]:
+                self.gameOver()
 
     def onEvent(self, event: "pygame.event.Event"):
         """Checks the events for the snake
