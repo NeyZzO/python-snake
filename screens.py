@@ -19,7 +19,7 @@ class DeathScreen:
         self.game = game
         sc: "pygame.Surface" = game.getScreen()
         self.replayBtn: "ActionButton" = ActionButton(x=(sc.get_width() // 2) - 50, y=(sc.get_height()//2) - 20, width=100, height=40, text="Replay", onClick=game.startGame, bg_color=(255,255,255), text_color=(255, 0, 0), hover_bg_color=(200, 200, 200), hover_text_color=(200, 0, 0), font_name="JetBrainsMono Nerd Font", font_size=20)
-        self.quitButton: "ActionButton" = ActionButton(x=(sc.get_width() // 2) - 50, y=(sc.get_height()//2) - 20 + 40 + 10, width=100, height=40, text="Quit", onClick=game.startGame, bg_color=(255,255,255), text_color=(255, 0, 0), hover_bg_color=(200, 200, 200), hover_text_color=(200, 0, 0), font_name="JetBrainsMono Nerd Font", font_size=20)
+        self.quitButton: "ActionButton" = ActionButton(x=(sc.get_width() // 2) - 50, y=(sc.get_height()//2) - 20 + 40 + 10, width=100, height=40, text="Quit", onClick=game.onCleanup   , bg_color=(255,255,255), text_color=(255, 0, 0), hover_bg_color=(200, 200, 200), hover_text_color=(200, 0, 0), font_name="JetBrainsMono Nerd Font", font_size=20)
 
     def draw(self):
         window: "pygame.Surface" = self.game.getScreen()
