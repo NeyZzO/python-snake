@@ -1,14 +1,16 @@
 import pygame
+from score import ScoreHandler
 # from main import App
 
 class Snake:
     def __init__(self, game):
         self.direction: str = "RIGHT"
         self.__change_to: str | None = None
-        self.pos = [100, 64]
+        self.pos = [128, 64]
         self.game = game
         self.alive = True
         self.updateing = True
+        self.newBestScore: bool = False
         self.sprites = [
             pygame.image.load("images/snake-head.png").convert_alpha(),
             pygame.image.load("images/snake-bp-1.png").convert_alpha(),
@@ -19,17 +21,20 @@ class Snake:
             pygame.image.load("images/snake-tail.png").convert_alpha(),
         ]
         self.body: list[list[int]] = [
-            [128, 64, "RIGHT"], # Tête
-            [112, 64, "RIGHT"], # Cou
-            [69, 64, "RIGHT"], # Corps
-            [80, 64, "RIGHT"] # Queue
+            [112, 64, "RIGHT"], # Tête
+            [96, 64, "RIGHT"], # Cou
+            [80, 64, "RIGHT"], # Corps
+            [64, 64, "RIGHT"] # Queue
         ]
         self.score = 0
+        self.bestScore: int = ScoreHandler.loadScore()
         self.game = game
 
 
     def gameOver(self):
         self.alive = False
+        self.newBestScore: bool = ScoreHandler.saveScore(self.score)
+        self.bestScore = ScoreHandler.loadScore()               
         self.game.gameOver()
 
     def drawScore(self, color: "pygame.Color", font: str, size: int, window: "pygame.surface.Surface"):
@@ -42,7 +47,7 @@ class Snake:
             window (pygame.surface.Surface): The game window
         """
         score_font: "pygame.font.Font" = pygame.font.SysFont(font, size)
-        score_surface = score_font.render(f"Score: {self.score} | Best: {"UNKNOWN"}", True, color)
+        score_surface = score_font.render(f"Score: {self.score} | Best: {self.bestScore}", True, color)
         score_rect = score_surface.get_rect()
 
         window.blit(score_surface, score_rect)
@@ -174,6 +179,7 @@ class Snake:
 
         # On update le corps du snake
         self.body.insert(0, [self.pos[0], self.pos[1], self.direction])
+        print(f"Snake: x={self.pos[0]} y={self.pos[1]} | Apple: x={self.game.apple.x} y={self.game.apple.y}")
         if self.pos[0] == self.game.apple.x and self.pos[1] == self.game.apple.y:
             self.game.apple.newCoords()
             self.score += 1

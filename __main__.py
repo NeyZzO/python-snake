@@ -66,11 +66,13 @@ class App:
 
     def onCleanup(self):
         pygame.quit()
+        exit(0)
         
     def startGame(self):
         self.snake = Snake(self)
         self.apple = Apple(self.__screen)
         self.started = True        
+        self.apple.newCoords()
 
     def execute(self, fps: int):
         while self.__running:
